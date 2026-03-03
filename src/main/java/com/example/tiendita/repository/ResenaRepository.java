@@ -1,0 +1,8 @@
+package com.example.tiendita.repository;
+
+import com.example.tiendita.domain.Resena;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ResenaRepository extends JpaRepository<Resena, Long> {
+
+}
