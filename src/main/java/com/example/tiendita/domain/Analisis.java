@@ -19,4 +19,36 @@ public class Analisis {
 
     @Column(name = "VistasMes")
     private Integer vistasMes;
+
+    public LocalDate getFechaDias() {
+        return fechaDias;
+    }
+
+    public void setFechaDias(LocalDate fechaDias) {
+        this.fechaDias = fechaDias;
+    }
+
+    public Integer getVistaDiaHoy() {
+        return vistaDiaHoy;
+    }
+
+    public void setVistaDiaHoy(Integer vistaDiaHoy) {
+        this.vistaDiaHoy = vistaDiaHoy;
+    }
+
+    public Integer getVistasSemana() {
+        return vistasSemana;
+    }
+
+    public void setVistasSemana(Integer vistasSemana) {
+        this.vistasSemana = vistasSemana;
+    }
+
+    public Integer getVistasMes() {
+        return vistasMes;
+    }
+
+    public void setVistasMes(Integer vistasMes) {
+        this.vistasMes = vistasMes;
+    }
 }

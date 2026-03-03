@@ -6,9 +6,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ResenaService {
 
-    private final ResenaRepository repo;
+    private final ResenaRepository resenaRepository;
 
-    public ResenaService(ResenaRepository repo) {
-        this.repo = repo;
+    public ResenaService(ResenaRepository resenaRepository) {
+        this.resenaRepository = resenaRepository;
+    }
+    public long contarResenas() {
+        return resenaRepository.count();
     }
 }

@@ -6,9 +6,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductosEnListaDeseosService {
 
-    private final ProductosEnListaDeseosRepository repo;
+    private final ProductosEnListaDeseosRepository productosEnListaDeseosRepository;
 
-    public ProductosEnListaDeseosService(ProductosEnListaDeseosRepository repo) {
-        this.repo = repo;
+    public ProductosEnListaDeseosService(ProductosEnListaDeseosRepository productosEnListaDeseosRepository) {
+        this.productosEnListaDeseosRepository = productosEnListaDeseosRepository;
+    }
+    public long contarProductosEnLista() {
+        return productosEnListaDeseosRepository.count();
     }
 }
