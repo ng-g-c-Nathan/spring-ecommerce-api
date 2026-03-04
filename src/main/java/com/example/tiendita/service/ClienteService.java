@@ -1,6 +1,7 @@
 package com.example.tiendita.service;
 
-import com.example.tiendita.DTO.ClienteRegisterRequestDTO;
+import com.example.tiendita.DTO.ActualizarPersonaRequest;
+import com.example.tiendita.DTO.ClienteRegisterRequest;
 import com.example.tiendita.domain.Carrito;
 import com.example.tiendita.domain.Cliente;
 import com.example.tiendita.domain.ListaDeseos;
@@ -10,6 +11,8 @@ import com.example.tiendita.repository.ListaDeseosRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.Optional;
 
 @Service
 public class ClienteService {
@@ -28,7 +31,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public void agregarCliente(ClienteRegisterRequestDTO dto) throws Exception {
+    public void agregarCliente(ClienteRegisterRequest dto) throws Exception {
 
         if (dto.getEmail() == null || dto.getEmail().isEmpty() ||
                 dto.getContrasena() == null || dto.getContrasena().isEmpty()) {
@@ -73,4 +76,74 @@ public class ClienteService {
 
     }
 
+    public boolean emailExiste(String email){
+        return clienteRepository.existsByEmail(email);
+    }
+
+    public Optional<Cliente> buscarPorCorreo(String correo) {
+        return clienteRepository.findByEmail(correo);
+    }
+
+    @Transactional
+    public void actualizarPersona(ActualizarPersonaRequest req) {
+
+        Cliente cliente = clienteRepository
+                .findByEmail(req.getCorreo())
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+        String correoActual = cliente.getEmail();
+
+        boolean correoCambio = !correoActual.equals(req.getCorreoNuevo());
+
+        cliente.setNombre(req.getNombre());
+        cliente.setApellidoPaterno(req.getApellidoP());
+        cliente.setApellidoMaterno(req.getApellidoM());
+        cliente.setApodo(req.getApodo());
+        cliente.setCalle(req.getCalle());
+        cliente.setNumeroExterior(req.getNumeroExterior());
+        cliente.setNumeroInterior(req.getNumeroInterior());
+        cliente.setCiudad(req.getCiudad());
+        cliente.setEstado(req.getEstado());
+        cliente.setCodigoPostal(req.getCodigoPostal());
+        cliente.setPais(req.getPais());
+        cliente.setInstruccionesExtras(req.getInstruccionesExtras());
+        cliente.setTelefono(req.getTelefono());
+        String correoFinal = req.getCorreoNuevo() != null ? req.getCorreoNuevo() : correoActual;
+        cliente.setEmail(correoFinal);
+
+        if (correoCambio) {
+            cliente.setVerificacion("NO");
+        } else {
+            cliente.setVerificacion("SI");
+        }
+
+        clienteRepository.save(cliente);
+
+        if (correoCambio) {
+            //reactivarCuenta(cliente); Aun no la agrego pero es quien se encarga de mandar correo de que cambio el correo y verifique
+        }
+    }
+    @Transactional(readOnly = true) //Transaccion pero unicamente de lectura
+    public int revisarAdmin(String email) {
+
+        String correo = email.replace("\"", "").trim();
+
+        Optional<Cliente> clienteOpt =
+                clienteRepository.findByEmail(correo);
+
+        // success = 3 → no existe
+        if (clienteOpt.isEmpty()) {
+            return 3;
+        }
+
+        Cliente cliente = clienteOpt.get();
+
+        // success = 1 → es admin
+        if ("SI".equalsIgnoreCase(cliente.getPermisos())) {
+            return 1;
+        }
+
+        // success = 2 → existe pero no es admin
+        return 2;
+    }
 }

@@ -18,6 +18,38 @@ public class ProductosEnCarrito {
     @MapsId("productoId")
     @JoinColumn(name = "ID_Producto")
     private Producto producto;
+    @Column(name = "Cantidad")
+    private Integer cantidad;
 
-    private Integer Cantidad;
+    public ProductosEnCarritoId getId() {
+        return id;
+    }
+
+    public void setId(ProductosEnCarritoId id) {
+        this.id = id;
+    }
+
+    public Carrito getCarrito() {
+        return carrito;
+    }
+
+    public void setCarrito(Carrito carrito) {
+        this.carrito = carrito;
+    }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
+
+    public Integer getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.tiendita.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,27 +15,28 @@ public class Pago {
     private Long id;
 
     @ManyToOne
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "ID_Cliente")
     private Cliente cliente;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Forma_pago")
     private String formaPago;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Fecha_pago")
     private LocalDate fechaPago;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Total")
     private BigDecimal total;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "ID_Paypal")
     private String idPaypal;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Correo_electronico_paypal")
     private String correoElectronicoPaypal;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Nombre_cliente_Paypal")
     private String nombreClientePaypal;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Direccion_cliente_Paypal")
     private String direccionClientePaypal;
 

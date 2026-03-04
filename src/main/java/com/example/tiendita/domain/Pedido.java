@@ -1,5 +1,6 @@
 package com.example.tiendita.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -20,7 +21,7 @@ public class Pedido {
 
     @Column(name = "Estado")
     private String estado;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne
     @JoinColumn(name = "ID_Compra")
     private Compra compra;
@@ -28,28 +29,28 @@ public class Pedido {
     @ManyToOne
     @JoinColumn(name = "ID_Cliente")
     private Cliente cliente;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Calle")
     private String calle;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Numero_exterior")
     private Integer numeroExterior;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Numero_interior")
     private Integer numeroInterior;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Ciudad")
     private String ciudad;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "EstadoOrigen")
     private String estadoOrigen;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Codigo_Postal")
     private Integer codigoPostal;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Pais")
     private String pais;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "InstruccionesExtras")
     private String instruccionesExtras;
 

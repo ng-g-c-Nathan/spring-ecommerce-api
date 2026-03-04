@@ -1,5 +1,6 @@
 package com.example.tiendita.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,58 +11,56 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_Cliente")
     private Long id;
-
     @Column(name = "Nombre")
     private String nombre;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Apellido_Paterno")
     private String apellidoPaterno;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Apellido_Materno")
     private String apellidoMaterno;
-
     @Column(name = "Apodo")
     private String apodo;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Permisos")
     private String permisos;
 
     @Column(name = "Email")
     private String email;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Verificacion")
     private String verificacion;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Contrasena")
     private String contrasena;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Telefono")
     private String telefono;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "RFC")
     private String rfc;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Calle")
     private String calle;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Numero_exterior")
     private String numeroExterior;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Numero_interior")
     private String numeroInterior;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Ciudad")
     private String ciudad;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Estado")
     private String estado;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Codigo_Postal")
     private String codigoPostal;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Pais")
     private String pais;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "InstruccionesExtras")
     private String instruccionesExtras;
 

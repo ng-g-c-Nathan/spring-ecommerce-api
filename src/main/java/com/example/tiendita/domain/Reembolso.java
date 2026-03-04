@@ -1,5 +1,6 @@
 package com.example.tiendita.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,13 +14,16 @@ public class Reembolso {
     @Column(name = "ID_Reembolso")
     private Long id;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne
     @JoinColumn(name = "ID_Transaccion")
     private Pago pago;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 
     @ManyToOne
     @JoinColumn(name = "ID_Compra")
     private Compra compra;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 
     @ManyToOne
     @JoinColumn(name = "ID_Producto")
@@ -27,12 +31,14 @@ public class Reembolso {
 
     @Column(name = "Fecha_Reembolso")
     private LocalDate fechaReembolso;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 
     @Column(name = "Monto")
     private BigDecimal monto;
 
     @Column(name = "Motivo")
     private String motivo;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 
     @Column(name = "Autorizada")
     private String autorizada;

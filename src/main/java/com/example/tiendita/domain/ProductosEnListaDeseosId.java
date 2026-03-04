@@ -11,4 +11,29 @@ public class ProductosEnListaDeseosId implements Serializable {
 
     @Column(name = "ID_Producto")
     private Long productoId;
+
+    public ProductosEnListaDeseosId(){
+
+    }
+
+    public ProductosEnListaDeseosId(Long listaId, Long productoId) {
+        this.listaId = listaId;
+        this.productoId = productoId;
+    }
+
+    public Long getListaId() {
+        return listaId;
+    }
+
+    public void setListaId(Long listaId) {
+        this.listaId = listaId;
+    }
+
+    public Long getProductoId() {
+        return productoId;
+    }
+
+    public void setProductoId(Long productoId) {
+        this.productoId = productoId;
+    }
 }

@@ -1,9 +1,9 @@
 package com.example.tiendita.DTO;
 
-public class ClienteLoginRequest {
+public class ClienteLoginRequestDTO {
     private String email;
     private String contrasena;
-    public ClienteLoginRequest() {}
+    public ClienteLoginRequestDTO() {}
 
     public String getEmail() {
         return email;

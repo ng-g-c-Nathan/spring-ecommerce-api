@@ -1,13 +1,14 @@
 package com.example.tiendita.controller;
 
 import com.example.tiendita.DTO.ProductoNuevoRequest;
-import com.example.tiendita.DTO.ProveedorMasGrande;
+import com.example.tiendita.DTO.ProveedorMasGrandeDto;
 import com.example.tiendita.domain.Producto;
 import com.example.tiendita.service.ProductoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/productos")
@@ -20,7 +21,7 @@ public class ProductoController {
     }
 
     @GetMapping("/proveedor-grande")
-    public ProveedorMasGrande proveedorGrande() {
+    public ProveedorMasGrandeDto proveedorGrande() {
         return productoService.obtenerProveedorGrande();
     }
 
@@ -75,6 +76,42 @@ public class ProductoController {
             return ResponseEntity.ok("{\"success\":1,\"id_producto\":" + idProducto + "}");
         } catch (Exception e) {
             return ResponseEntity.ok("{\"success\":0,\"error\":\"" + e.getMessage() + "\"}");
+        }
+    }
+    @GetMapping("/producto/{id}")
+    public ResponseEntity<?> consultarProducto(@PathVariable Long id) {
+
+        return productoService
+                .consultarProductoEspecial(id)
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.ok(Map.of("success", 0)));
+    }
+
+    @PostMapping("/borrarProducto")
+    public ResponseEntity<?> borrarProducto(@RequestBody String idProducto) {
+
+        try {
+            productoService.borrarProducto(idProducto.trim());
+            return ResponseEntity.ok(Map.of("success", 1));
+
+        } catch (Exception e) {
+            return ResponseEntity.ok(
+                    Map.of("success", 0, "message", e.getMessage())
+            );
+        }
+    }
+
+    @PostMapping("/actualizarProducto")
+    public ResponseEntity<?> actualizarProducto(@RequestBody Producto producto) {
+
+        try {
+            productoService.actualizarProducto(producto);
+            return ResponseEntity.ok(Map.of("success", 1));
+
+        } catch (Exception e) {
+            return ResponseEntity.ok(
+                    Map.of("success", 0, "message", e.getMessage())
+            );
         }
     }
 }

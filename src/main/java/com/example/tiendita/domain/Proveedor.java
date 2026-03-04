@@ -1,5 +1,6 @@
 package com.example.tiendita.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,7 +14,7 @@ public class Proveedor {
 
     @Column(name = "NombreEmpresa")
     private String nombreEmpresa;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "DireccionEmpresa")
     private String direccionEmpresa;
 

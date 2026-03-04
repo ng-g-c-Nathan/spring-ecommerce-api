@@ -18,6 +18,6 @@ public class ProductosEnCompra {
     @MapsId("productoId")
     @JoinColumn(name = "ID_Producto")
     private Producto producto;
-
-    private Integer Cantidad;
+    @Column(name = "Cantidad")
+    private Integer cantidad;
 }

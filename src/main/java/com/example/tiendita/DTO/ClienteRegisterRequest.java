@@ -1,11 +1,11 @@
 package com.example.tiendita.DTO;
 
-public class ClienteRegisterRequestDTO {
+public class ClienteRegisterRequest {
 
     private String email;
     private String contrasena;
 
-    public ClienteRegisterRequestDTO() {}
+    public ClienteRegisterRequest() {}
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
