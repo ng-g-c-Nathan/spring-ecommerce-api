@@ -175,4 +175,16 @@ public class ClienteController {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         }
     }
+
+    @PostMapping("/demo/reset-password")
+    public ResponseEntity<?> resetPasswordDemo(@RequestParam String email) {
+
+        boolean ok = clienteService.resetPasswordDemo(email);
+
+        if (!ok) {
+            return ResponseEntity.badRequest().body("Usuario no encontrado");
+        }
+
+        return ResponseEntity.ok("Password reseteado a 12345678");
+    }
 }

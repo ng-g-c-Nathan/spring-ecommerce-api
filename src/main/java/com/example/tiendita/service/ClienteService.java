@@ -264,4 +264,23 @@ public class ClienteService {
 
         return dto;
     }
+
+    @Transactional
+    public boolean resetPasswordDemo(String email) {
+
+        if (!demoMode) {
+            throw new RuntimeException("Esta función solo está disponible en modo DEMO.");
+        }
+
+        Cliente cliente = clienteRepository.findByEmail(email).orElse(null);
+
+        if (cliente == null) {
+            return false;
+        }
+
+        cliente.setContrasena(passwordEncoder.encode("12345678"));
+        clienteRepository.save(cliente);
+
+        return true;
+    }
 }
