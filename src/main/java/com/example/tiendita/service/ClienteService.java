@@ -5,6 +5,7 @@ import com.example.tiendita.DTO.ClienteRegisterRequest;
 import com.example.tiendita.DTO.ClienteResponseDTO;
 import com.example.tiendita.domain.*;
 import com.example.tiendita.repository.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,6 +23,9 @@ public class ClienteService {
 
     private final VerificarRepository verificarRepository;
     private final RestablecerRepository restablecerRepository;
+
+    @Value("${DEMO:false}")
+    private boolean demoMode;
 
     public ClienteService(ClienteRepository clienteRepository, CarritoRepository carritoRepository, ListaDeseosRepository listaDeseosRepository, BCryptPasswordEncoder passwordEncoder, VerificarRepository verificarRepository, RestablecerRepository restablecerRepository) {
         this.clienteRepository = clienteRepository;
@@ -50,7 +54,11 @@ public class ClienteService {
         cliente.setEmail(dto.getEmail());
         cliente.setContrasena(passwordEncoder.encode(dto.getContrasena())); // mejor que MD5
         cliente.setPermisos("NO");
-        cliente.setVerificacion("NO");
+        if (demoMode) {
+            cliente.setVerificacion("SI");
+        }else {
+            cliente.setVerificacion("NO");
+        }
         clienteRepository.save(cliente);
 
         // Crear carrito
