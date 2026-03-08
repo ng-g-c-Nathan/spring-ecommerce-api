@@ -44,7 +44,7 @@ public class ClienteController {
     }
 
     @PostMapping("/existe-correo")
-    public Map<String,Integer> existeCorreo(@RequestParam("email") String email){
+    public Map<String, Integer> existeCorreo(@RequestParam("email") String email) {
         Map<String, Integer> response = new HashMap<>();
         boolean existe = clienteService.emailExiste(email);
         response.put("success", existe ? 1 : 0);
@@ -90,6 +90,7 @@ public class ClienteController {
             );
         }
     }
+
     @GetMapping("/id")
     public ResponseEntity<?> getId(@RequestParam String email) {
         try {
@@ -129,10 +130,14 @@ public class ClienteController {
             return ResponseEntity.status(404).body("No se encontró ningún cliente con el email proporcionado");
         }
 
-        String apodoONombre = cliente.getApodo() != null ? cliente.getApodo() : cliente.getNombre();
+        String apodoONombre;
 
-        if (apodoONombre == null) {
-            return ResponseEntity.status(404).body("El apodo es null");
+        if (cliente.getApodo() != null && !cliente.getApodo().isEmpty()) {
+            apodoONombre = cliente.getApodo();
+        } else if (cliente.getNombre() != null && !cliente.getNombre().isEmpty()) {
+            apodoONombre = cliente.getNombre();
+        } else {
+            apodoONombre = cliente.getEmail();
         }
 
         //Retorna ID, correo y apodo
@@ -143,6 +148,7 @@ public class ClienteController {
         respuesta.put("permisos", cliente.getPermisos());
         return ResponseEntity.ok(respuesta);
     }
+
     @PostMapping("/eliminar-token-reset")
     public ResponseEntity<?> eliminarTokenReset(@RequestParam Long token) {
         try {
