@@ -19,8 +19,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/archivos")
 public class ArchivoController {
 
-    private final String BASE_PATH = "uploads/";
-
+    private final String BASE_PATH = System.getProperty("user.dir") + "/uploads/";
     // Subir archivo(foto o gif)
     @PostMapping("/subir")
     public ResponseEntity<String> subirArchivo(
