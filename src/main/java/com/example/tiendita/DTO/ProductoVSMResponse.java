@@ -7,6 +7,7 @@ public class ProductoVSMResponse {
     private String categoria;
     private String comentarios;
     private double similitud;
+    private Double precio;
 
     public ProductoVSMResponse() {
     }
@@ -66,5 +67,13 @@ public class ProductoVSMResponse {
 
     public void setSimilitud(double similitud) {
         this.similitud = similitud;
+    }
+
+    public Double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(Double precio) {
+        this.precio = precio;
     }
 }

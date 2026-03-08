@@ -1,12 +1,15 @@
 package com.example.tiendita.controller;
 
+import com.example.tiendita.DTO.ActualizarProductoDTO;
 import com.example.tiendita.DTO.ProductoNuevoRequest;
-import com.example.tiendita.DTO.ProveedorMasGrandeDto;
+import com.example.tiendita.DTO.ProveedorGrandeDTO;
+import com.example.tiendita.DTO.TopProductoDTO;
 import com.example.tiendita.domain.Producto;
 import com.example.tiendita.service.ProductoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +24,7 @@ public class ProductoController {
     }
 
     @GetMapping("/proveedor-grande")
-    public ProveedorMasGrandeDto proveedorGrande() {
+    public ProveedorGrandeDTO proveedorGrande() {
         return productoService.obtenerProveedorGrande();
     }
 
@@ -102,16 +105,49 @@ public class ProductoController {
     }
 
     @PostMapping("/actualizarProducto")
-    public ResponseEntity<?> actualizarProducto(@RequestBody Producto producto) {
-
+    public ResponseEntity<?> actualizarProducto(@RequestBody ActualizarProductoDTO dto) {
         try {
-            productoService.actualizarProducto(producto);
+            productoService.actualizarProducto(dto);
             return ResponseEntity.ok(Map.of("success", 1));
-
         } catch (Exception e) {
-            return ResponseEntity.ok(
-                    Map.of("success", 0, "message", e.getMessage())
-            );
+            return ResponseEntity.ok(Map.of("success", 0, "message", e.getMessage()));
         }
+    }
+
+    @GetMapping("/top")
+    public ResponseEntity<?> getTopDiez() {
+        List<TopProductoDTO> result = productoService.getTopDiez();
+
+        if (result.isEmpty()) {
+            return ResponseEntity.ok().body("{\"success\": 0}");
+        }
+
+        return ResponseEntity.ok(result);
+    }
+    @GetMapping("/baratos")
+    public ResponseEntity<?> getBaratos() {
+        List<Producto> result = productoService.getProductosBaratos();
+        return result.isEmpty()
+                ? ResponseEntity.ok("{\"success\": 0}")
+                : ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/caros")
+    public ResponseEntity<?> getCaros() {
+        List<Producto> result = productoService.getProductosCaros();
+        return result.isEmpty()
+                ? ResponseEntity.ok("{\"success\": 0}")
+                : ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/inicio")
+    public ResponseEntity<?> inicio() {
+        List<Producto> productos = productoService.obtenerInicio();
+
+        if (productos.isEmpty()) {
+            return ResponseEntity.ok(Collections.singletonMap("success", 0));
+        }
+
+        return ResponseEntity.ok(productos);
     }
 }

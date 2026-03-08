@@ -2,12 +2,9 @@ package com.example.tiendita.service;
 
 import com.example.tiendita.DTO.ActualizarPersonaRequest;
 import com.example.tiendita.DTO.ClienteRegisterRequest;
-import com.example.tiendita.domain.Carrito;
-import com.example.tiendita.domain.Cliente;
-import com.example.tiendita.domain.ListaDeseos;
-import com.example.tiendita.repository.CarritoRepository;
-import com.example.tiendita.repository.ClienteRepository;
-import com.example.tiendita.repository.ListaDeseosRepository;
+import com.example.tiendita.DTO.ClienteResponseDTO;
+import com.example.tiendita.domain.*;
+import com.example.tiendita.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,11 +20,16 @@ public class ClienteService {
 
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public ClienteService(ClienteRepository clienteRepository, CarritoRepository carritoRepository, ListaDeseosRepository listaDeseosRepository,BCryptPasswordEncoder passwordEncoder) {
+    private final VerificarRepository verificarRepository;
+    private final RestablecerRepository restablecerRepository;
+
+    public ClienteService(ClienteRepository clienteRepository, CarritoRepository carritoRepository, ListaDeseosRepository listaDeseosRepository, BCryptPasswordEncoder passwordEncoder, VerificarRepository verificarRepository, RestablecerRepository restablecerRepository) {
         this.clienteRepository = clienteRepository;
+        this.verificarRepository = verificarRepository;
         this.carritoRepository = carritoRepository;
         this.listaDeseosRepository = listaDeseosRepository;
         this.passwordEncoder = passwordEncoder;
+        this.restablecerRepository = restablecerRepository;
     }
 
     @Transactional
@@ -76,7 +78,7 @@ public class ClienteService {
 
     }
 
-    public boolean emailExiste(String email){
+    public boolean emailExiste(String email) {
         return clienteRepository.existsByEmail(email);
     }
 
@@ -93,36 +95,34 @@ public class ClienteService {
 
         String correoActual = cliente.getEmail();
 
-        boolean correoCambio = !correoActual.equals(req.getCorreoNuevo());
+        // Solo actualizamos campos que no sean null
+        if (req.getNombre() != null) cliente.setNombre(req.getNombre());
+        if (req.getApellidoP() != null) cliente.setApellidoPaterno(req.getApellidoP());
+        if (req.getApellidoM() != null) cliente.setApellidoMaterno(req.getApellidoM());
+        if (req.getApodo() != null) cliente.setApodo(req.getApodo());
+        if (req.getCalle() != null) cliente.setCalle(req.getCalle());
+        if (req.getNumeroExterior() != null) cliente.setNumeroExterior(req.getNumeroExterior());
+        if (req.getNumeroInterior() != null) cliente.setNumeroInterior(req.getNumeroInterior());
+        if (req.getCiudad() != null) cliente.setCiudad(req.getCiudad());
+        if (req.getEstado() != null) cliente.setEstado(req.getEstado());
+        if (req.getCodigoPostal() != null) cliente.setCodigoPostal(req.getCodigoPostal());
+        if (req.getPais() != null) cliente.setPais(req.getPais());
+        if (req.getInstruccionesExtras() != null) cliente.setInstruccionesExtras(req.getInstruccionesExtras());
+        if (req.getTelefono() != null) cliente.setTelefono(req.getTelefono());
+        if (req.getRfc() != null) cliente.setRfc(req.getRfc());
 
-        cliente.setNombre(req.getNombre());
-        cliente.setApellidoPaterno(req.getApellidoP());
-        cliente.setApellidoMaterno(req.getApellidoM());
-        cliente.setApodo(req.getApodo());
-        cliente.setCalle(req.getCalle());
-        cliente.setNumeroExterior(req.getNumeroExterior());
-        cliente.setNumeroInterior(req.getNumeroInterior());
-        cliente.setCiudad(req.getCiudad());
-        cliente.setEstado(req.getEstado());
-        cliente.setCodigoPostal(req.getCodigoPostal());
-        cliente.setPais(req.getPais());
-        cliente.setInstruccionesExtras(req.getInstruccionesExtras());
-        cliente.setTelefono(req.getTelefono());
-        String correoFinal = req.getCorreoNuevo() != null ? req.getCorreoNuevo() : correoActual;
-        cliente.setEmail(correoFinal);
+        // Lógica del correo
+        boolean correoCambio = req.getCorreoNuevo() != null && !correoActual.equals(req.getCorreoNuevo());
+        if (req.getCorreoNuevo() != null) cliente.setEmail(req.getCorreoNuevo());
 
         if (correoCambio) {
             cliente.setVerificacion("NO");
-        } else {
-            cliente.setVerificacion("SI");
+            // reactivarCuenta(cliente);
         }
 
         clienteRepository.save(cliente);
-
-        if (correoCambio) {
-            //reactivarCuenta(cliente); Aun no la agrego pero es quien se encarga de mandar correo de que cambio el correo y verifique
-        }
     }
+
     @Transactional(readOnly = true) //Transaccion pero unicamente de lectura
     public int revisarAdmin(String email) {
 
@@ -145,5 +145,115 @@ public class ClienteService {
 
         // success = 2 → existe pero no es admin
         return 2;
+    }
+
+    @Transactional(readOnly = true)
+    public Long getIdByEmail(String email) {
+        return clienteRepository.findByEmail(email)
+                .map(Cliente::getId)
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró ningún cliente con el email proporcionado"));
+    }
+
+    public Cliente buscarPorEmail(String email) {
+        return clienteRepository.findByEmail(email).orElse(null);
+    }
+
+    @Transactional
+    public void guardarTokenVerificacion(Cliente cliente, Long token) {
+        Verificar verificar = new Verificar();
+        verificar.setId(token);
+        verificar.setCliente(cliente);
+        verificarRepository.save(verificar);
+    }
+
+    @Transactional
+    public boolean verificarCuenta(Long token) {
+        // 1. Buscar el registro en verificar por token
+        Verificar verificar = verificarRepository.findById(token).orElse(null);
+
+        if (verificar == null) {
+            return false; // Token no encontrado
+        }
+
+        //Obtener el cliente y actualizar Verificacion = 'SI'
+        Cliente cliente = verificar.getCliente();
+        cliente.setVerificacion("SI");
+        clienteRepository.save(cliente);
+
+        // 3. Borrar el token de la tabla verificar
+        verificarRepository.delete(verificar);
+
+        return true;
+    }
+
+    @Transactional
+    public boolean modificarPassword(String email, String contrasena) {
+        Cliente cliente = clienteRepository.findByEmail(email).orElse(null);
+
+        if (cliente == null) {
+            return false;
+        }
+
+        cliente.setContrasena(passwordEncoder.encode(contrasena));
+        clienteRepository.save(cliente);
+
+        return true;
+    }
+
+    @Transactional
+    public Long guardarTokenResetPassword(Cliente cliente, Long token) {
+
+        Restablecer restablecer = new Restablecer();
+        restablecer.setId(token);
+        restablecer.setCliente(cliente);
+
+        restablecerRepository.save(restablecer);
+
+        return token;
+    }
+
+    @Transactional
+    public Long eliminarTokenResetPassword(Long token) {
+
+        // Buscar el token en la BD
+        Restablecer restablecer = restablecerRepository.findById(token)
+                .orElseThrow(() -> new RuntimeException("Token no existe o ya fue usado"));
+
+        // Guardar el ID del cliente antes de eliminar
+        Long idCliente = restablecer.getCliente().getId();
+
+        // Borrar el token
+        restablecerRepository.delete(restablecer);
+
+        // Devolver ID del cliente
+        return idCliente;
+    }
+
+    @Transactional(readOnly = true)
+    public ClienteResponseDTO getClienteCompleto(String email) {
+        Cliente cliente = clienteRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("No se encontró el cliente"));
+
+        ClienteResponseDTO dto = new ClienteResponseDTO();
+        dto.setId(cliente.getId());
+        dto.setNombre(cliente.getNombre());
+        dto.setApellidoPaterno(cliente.getApellidoPaterno());
+        dto.setApellidoMaterno(cliente.getApellidoMaterno());
+        dto.setApodo(cliente.getApodo());
+        dto.setEmail(cliente.getEmail());
+        dto.setTelefono(cliente.getTelefono());
+        dto.setRfc(cliente.getRfc());
+        dto.setCalle(cliente.getCalle());
+        dto.setNumeroExterior(cliente.getNumeroExterior());
+        dto.setNumeroInterior(cliente.getNumeroInterior());
+        dto.setCiudad(cliente.getCiudad());
+        dto.setEstado(cliente.getEstado());
+        dto.setCodigoPostal(cliente.getCodigoPostal());
+        dto.setPais(cliente.getPais());
+        dto.setInstruccionesExtras(cliente.getInstruccionesExtras());
+        dto.setPermisos(cliente.getPermisos());
+        dto.setVerificacion(cliente.getVerificacion());
+
+        return dto;
     }
 }

@@ -15,16 +15,13 @@ public class Pago {
     private Long id;
 
     @ManyToOne
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "ID_Cliente")
     private Cliente cliente;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Forma_pago")
     private String formaPago;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Fecha_pago")
     private LocalDate fechaPago;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "Total")
     private BigDecimal total;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

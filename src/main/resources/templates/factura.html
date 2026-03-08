@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #333;
+            padding: 0;
+            background: #fff;
+        }
+
+        /* ── Encabezado estilo Electrotech ── */
+        .header {
+            background-color: #111111;
+            padding: 18px 40px;
+            margin-bottom: 0;
+        }
+        .empresa-nombre {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+        .empresa-nombre span {
+            color: #4ADE80; /* punto verde */
+        }
+        .empresa-email {
+            color: #9CA3AF;
+            margin-top: 2px;
+            font-size: 11px;
+        }
+
+        /* ── Barra verde (sub-header) ── */
+        .subheader {
+            background-color: #1F4D38;
+            padding: 10px 40px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .factura-titulo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 2px;
+        }
+        .factura-meta {
+            text-align: right;
+            color: #D1FAE5;
+            font-size: 11px;
+        }
+
+        /* ── Contenido interior ── */
+        .content {
+            padding: 0 40px 40px 40px;
+        }
+
+        /* ── Secciones ── */
+        .seccion-titulo {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #9CA3AF;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #E5E7EB;
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+        }
+
+        /* ── Tabla de datos fiscales ── */
+        .tabla-fiscal {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .tabla-fiscal td {
+            padding: 6px 10px;
+            vertical-align: top;
+        }
+        .tabla-fiscal .label {
+            color: #9CA3AF;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 35%;
+        }
+        .tabla-fiscal .value {
+            font-weight: bold;
+        }
+
+        /* ── Tabla de productos ── */
+        .tabla-productos {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+        .tabla-productos thead tr {
+            background-color: #1F4D38;
+            color: white;
+        }
+        .tabla-productos th,
+        .tabla-productos td {
+            padding: 10px 12px;
+            text-align: left;
+        }
+        .tabla-productos tbody tr:nth-child(even) {
+            background-color: #F3F4F6;
+        }
+        .tabla-productos tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        /* ── Estatus badge ── */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .badge-pendiente  { background: #FEF3C7; color: #92400E; }
+        .badge-aprobada   { background: #D1FAE5; color: #065F46; }
+        .badge-rechazada  { background: #FEE2E2; color: #991B1B; }
+
+        /* ── Footer ── */
+        .footer {
+            margin-top: 50px;
+            background-color: #111111;
+            padding: 14px 40px;
+            text-align: center;
+            color: #6B7280;
+            font-size: 10px;
+        }
+        .footer span {
+            color: #4ADE80;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <table width="100%">
+        <tr>
+            <td style="vertical-align:top;">
+                <div class="empresa-nombre">Electrotech<span>.</span></div>
+                <div class="empresa-email">tiendita@correo.com</div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="subheader">
+    <div class="factura-titulo">FACTURA</div>
+    <div class="factura-meta">
+        <div>
+            # <span th:text="${factura.idFacturacion}">001</span>
+            &nbsp;
+            <span th:classappend="${factura.estatus == 'Aprobada'   ? 'badge-aprobada'  :
+                                   factura.estatus == 'Rechazada'  ? 'badge-rechazada' :
+                                                                     'badge-pendiente'}"
+                  class="badge"
+                  th:text="${factura.estatus}">Pendiente</span>
+        </div>
+        <div>Emitida: <span th:text="${factura.fechaEmision}">2025-01-01</span></div>
+        <div>Vence:&nbsp;&nbsp;<span th:text="${factura.fechaVencimiento}">2025-01-08</span></div>
+    </div>
+</div>
+
+<div class="content">
+
+    <!-- Datos del cliente -->
+    <table width="100%">
+        <tr>
+            <td style="width:50%; vertical-align:top; padding-right:20px;">
+                <div class="seccion-titulo">Cliente</div>
+                <div style="font-weight:bold;" th:text="${factura.nombreCompleto}">Nombre</div>
+                <div style="color:#666;"       th:text="${factura.email}">email</div>
+            </td>
+            <td style="width:50%; vertical-align:top;">
+                <div class="seccion-titulo">Dirección de facturación</div>
+                <div style="color:#666;" th:text="${factura.direccion}">Dirección</div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Datos fiscales -->
+    <div style="margin-top:24px;">
+        <div class="seccion-titulo">Datos fiscales</div>
+        <table class="tabla-fiscal">
+            <tr>
+                <td class="label">RFC</td>
+                <td class="value" th:text="${factura.rfc}">XAXX010101000</td>
+                <td class="label">Razón Social</td>
+                <td class="value" th:text="${factura.razonSocial}">Mi Empresa S.A.</td>
+            </tr>
+            <tr>
+                <td class="label">Régimen Fiscal</td>
+                <td class="value" th:text="${factura.regimenFiscal}">Persona Física</td>
+                <td class="label">Uso CFDI</td>
+                <td class="value" th:text="${factura.usoCfdi}">Gastos en general</td>
+            </tr>
+            <tr>
+                <td class="label">C.P. Fiscal</td>
+                <td class="value" th:text="${factura.codigoPostalFiscal}">06600</td>
+                <td class="label">Correo facturación</td>
+                <td class="value" th:text="${factura.correoFacturacion}">conta@empresa.com</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Productos -->
+    <table class="tabla-productos">
+        <thead>
+        <tr>
+            <th>Productos</th>
+            <th style="text-align:right;">Total unidades</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${factura.detalles}">Producto A (2), Producto B (1)</td>
+            <td style="text-align:right;" th:text="${factura.totalProductos}">3</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Referencia de compra -->
+    <div style="margin-top:16px; color:#666; font-size:11px;">
+        Referencia compra #<span th:text="${factura.idCompra}">123</span>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p>Electrotech<span>.</span> · México · Este documento es una representación de su factura electrónica.</p>
+</div>
+
+</body>
+</html>

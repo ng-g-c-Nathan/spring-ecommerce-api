@@ -3,6 +3,8 @@ package com.example.tiendita.controller;
 import com.example.tiendita.DTO.ActualizarPersonaRequest;
 import com.example.tiendita.DTO.ClienteLoginRequestDTO;
 import com.example.tiendita.DTO.ClienteRegisterRequest;
+import com.example.tiendita.DTO.ClienteResponseDTO;
+import com.example.tiendita.domain.Cliente;
 import com.example.tiendita.service.ClienteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -86,6 +88,91 @@ public class ClienteController {
             return ResponseEntity.ok(
                     Map.of("success", 4, "error", e.getMessage())
             );
+        }
+    }
+    @GetMapping("/id")
+    public ResponseEntity<?> getId(@RequestParam String email) {
+        try {
+            Long id = clienteService.getIdByEmail(email);
+            return ResponseEntity.ok(id);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.ok(Map.of("success", 0, "message", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/modificar-password")
+    public ResponseEntity<String> modificarPassword(@RequestBody ClienteLoginRequestDTO request) {
+        try {
+            if (request.getEmail() == null || request.getContrasena() == null ||
+                    request.getEmail().isBlank() || request.getContrasena().isBlank()) {
+                return ResponseEntity.status(400).body("Faltan datos de contraseña o correo electrónico");
+            }
+
+            boolean resultado = clienteService.modificarPassword(request.getEmail(), request.getContrasena());
+
+            if (resultado) {
+                return ResponseEntity.ok("Contraseña actualizada correctamente");
+            } else {
+                return ResponseEntity.status(404).body("No se encontró un cliente con ese correo");
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error en el proceso: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/apodo")
+    public ResponseEntity<?> getApodo(@RequestParam String email) {
+        Cliente cliente = clienteService.buscarPorEmail(email);
+
+        if (cliente == null) {
+            return ResponseEntity.status(404).body("No se encontró ningún cliente con el email proporcionado");
+        }
+
+        String apodoONombre = cliente.getApodo() != null ? cliente.getApodo() : cliente.getNombre();
+
+        if (apodoONombre == null) {
+            return ResponseEntity.status(404).body("El apodo es null");
+        }
+
+        //Retorna ID, correo y apodo
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("id", cliente.getId());
+        respuesta.put("correo", cliente.getEmail());
+        respuesta.put("apodo", apodoONombre);
+        respuesta.put("permisos", cliente.getPermisos());
+        return ResponseEntity.ok(respuesta);
+    }
+    @PostMapping("/eliminar-token-reset")
+    public ResponseEntity<?> eliminarTokenReset(@RequestParam Long token) {
+        try {
+
+            Long idCliente = clienteService.eliminarTokenResetPassword(token);
+
+            return ResponseEntity.ok(Map.of(
+                    "success", 1,
+                    "ID_Cliente", idCliente
+            ));
+
+        } catch (RuntimeException e) {
+            // Token no existe
+            return ResponseEntity.status(404)
+                    .body(Map.of("success", 0, "error", e.getMessage()));
+
+        } catch (Exception e) {
+            // Error inesperado
+            return ResponseEntity.status(500)
+                    .body(Map.of("success", 0, "error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/completo")
+    public ResponseEntity<?> getClienteCompleto(@RequestParam String email) {
+        try {
+            ClienteResponseDTO dto = clienteService.getClienteCompleto(email);
+            return ResponseEntity.ok(dto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         }
     }
 }

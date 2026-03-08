@@ -47,4 +47,7 @@ public interface ProductosEnCarritoRepository extends JpaRepository<ProductosEnC
     where pc.producto.id = :id
 """)
     void deleteByProductoId(Long id);
+    List<ProductosEnCarrito> findByCarrito(Carrito carrito);
+    void deleteByCarrito(Carrito carrito);
+
 }

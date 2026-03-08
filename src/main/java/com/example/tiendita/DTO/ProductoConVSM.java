@@ -6,4 +6,5 @@ public interface ProductoConVSM {
     String getDescripcion();
     String getCategoria();
     String getComentarios();
+    Double getPrecio();
 }

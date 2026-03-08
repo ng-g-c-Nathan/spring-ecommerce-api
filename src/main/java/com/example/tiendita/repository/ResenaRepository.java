@@ -29,4 +29,6 @@ public interface ResenaRepository extends JpaRepository<Resena, Long> {
         WHERE r.producto.id = :idProducto
     """)
     List<ResenaDTO> buscarResenasProducto(Long idProducto);
+
+    boolean existsByCliente_IdAndProducto_Id(Long clienteId, Long productoId);
 }

@@ -117,7 +117,7 @@ public class VsmService {
             dto.setDescripcion(row.getDescripcion());
             dto.setCategoria(row.getCategoria());
             dto.setComentarios(row.getComentarios());
-
+            dto.setPrecio(row.getPrecio());
             productos.add(dto);
         }
 
@@ -222,7 +222,7 @@ public class VsmService {
             dto.setDescripcion(p.getDescripcion());
             dto.setCategoria(p.getCategoria());
             dto.setComentarios(p.getComentarios());
-
+            dto.setPrecio(p.getPrecio());
             productosDTO.add(dto);
         }
 

@@ -38,8 +38,6 @@ public class Reembolso {
 
     @Column(name = "Motivo")
     private String motivo;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-
     @Column(name = "Autorizada")
     private String autorizada;
 

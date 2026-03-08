@@ -46,4 +46,10 @@ public class ResenaController {
             );
         }
     }
+    @GetMapping("/derecho")
+    public ResponseEntity<?> derechoResena(@RequestParam String email,
+                                           @RequestParam Long idProducto) {
+        boolean tieneDerecho = resenaService.tieneDerechoResena(email, idProducto);
+        return ResponseEntity.ok(Map.of("success", tieneDerecho ? 1 : 0));
+    }
 }

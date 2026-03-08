@@ -17,12 +17,13 @@ public class ActualizarPersonaRequest {
     private String instruccionesExtras;
     private String telefono;
     private String correoNuevo;
+    private String rfc;
 
     public ActualizarPersonaRequest(){
 
     }
 
-    public ActualizarPersonaRequest(String correo, String nombre, String apellidoP, String apellidoM, String apodo, String calle, String numeroExterior, String numeroInterior, String ciudad, String estado, String codigoPostal, String pais, String instruccionesExtras, String telefono, String correoNuevo) {
+    public ActualizarPersonaRequest(String correo, String nombre, String apellidoP, String apellidoM, String apodo, String calle, String numeroExterior, String numeroInterior, String ciudad, String estado, String codigoPostal, String pais, String instruccionesExtras, String telefono, String correoNuevo,String rfc) {
         this.correo = correo;
         this.nombre = nombre;
         this.apellidoP = apellidoP;
@@ -38,6 +39,7 @@ public class ActualizarPersonaRequest {
         this.instruccionesExtras = instruccionesExtras;
         this.telefono = telefono;
         this.correoNuevo = correoNuevo;
+        this.rfc=rfc;
     }
 
     public String getCorreo() {
@@ -159,4 +161,6 @@ public class ActualizarPersonaRequest {
     public void setCorreoNuevo(String correoNuevo) {
         this.correoNuevo = correoNuevo;
     }
+    public String getRfc() { return rfc; }
+    public void setRfc(String rfc) { this.rfc = rfc; }
 }

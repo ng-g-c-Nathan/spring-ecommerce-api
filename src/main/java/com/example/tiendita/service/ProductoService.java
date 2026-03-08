@@ -1,13 +1,12 @@
 package com.example.tiendita.service;
 
-import com.example.tiendita.DTO.ProductoNuevoRequest;
-import com.example.tiendita.DTO.ProductosConProveedorDTO;
-import com.example.tiendita.DTO.ProveedorMasGrandeDto;
+import com.example.tiendita.DTO.*;
 import com.example.tiendita.domain.Producto;
 import com.example.tiendita.domain.Proveedor;
 import com.example.tiendita.repository.*;
-import jakarta.transaction.Transactional;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +27,7 @@ public class ProductoService {
         this.productosEnListaDeseosRepository=productosEnListaDeseosRepository;
         this.resenaRepository=resenaRepository;
     }
-    public ProveedorMasGrandeDto obtenerProveedorGrande() {
+    public ProveedorGrandeDTO obtenerProveedorGrande() {
 
         return productoRepository
                 .proveedorConMasProductos()
@@ -91,27 +90,44 @@ public class ProductoService {
     }
 
     @Transactional
-    public void actualizarProducto(Producto data) throws Exception {
+    public void actualizarProducto(ActualizarProductoDTO dto) throws Exception {
 
-        Producto producto = productoRepository.findById(data.getId())
+        Producto producto = productoRepository.findById(dto.getEditarID())
                 .orElseThrow(() -> new Exception("Producto no encontrado"));
 
-        producto.setNombre(data.getNombre());
-        producto.setDescripcion(data.getDescripcion());
-        producto.setPrecio(data.getPrecio());
-        producto.setCategoria(data.getCategoria());
-        producto.setStock(data.getStock());
+        producto.setNombre(dto.getEditarNombre());
+        producto.setDescripcion(dto.getEditarDescripcion());
+        producto.setPrecio(dto.getEditarPrecio());
+        producto.setCategoria(dto.getEditarCategoria());
+        producto.setStock(dto.getEditarStock());
 
-        if (data.getProveedor() == null || data.getProveedor().getId() == null) {
+        if (dto.getEditarProveedor() == null) {
             throw new Exception("Proveedor inválido");
         }
 
         Proveedor proveedor = proveedorRepository
-                .findById(data.getProveedor().getId())
+                .findById(dto.getEditarProveedor())
                 .orElseThrow(() -> new Exception("Proveedor no encontrado"));
 
         producto.setProveedor(proveedor);
 
         productoRepository.save(producto);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TopProductoDTO> getTopDiez() {
+        return productoRepository.findTopDiez();
+    }
+
+    public List<Producto> getProductosBaratos() {
+        return productoRepository.findAllByOrderByPrecioAsc();
+    }
+
+    public List<Producto> getProductosCaros() {
+        return productoRepository.findAllByOrderByPrecioDesc();
+    }
+
+    public List<Producto> obtenerInicio() {
+        return productoRepository.findRandom();
     }
 }
