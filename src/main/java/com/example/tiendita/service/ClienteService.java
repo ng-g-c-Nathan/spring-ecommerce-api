@@ -123,7 +123,7 @@ public class ClienteService {
         boolean correoCambio = req.getCorreoNuevo() != null && !correoActual.equals(req.getCorreoNuevo());
         if (req.getCorreoNuevo() != null) cliente.setEmail(req.getCorreoNuevo());
 
-        if (correoCambio) {
+        if (correoCambio && !demoMode) {
             cliente.setVerificacion("NO");
             // reactivarCuenta(cliente);
         }
